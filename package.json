@@ -1,0 +1,24 @@
+{
+    "name": "easy-zustand",
+    "version": "1.0.0",
+    "license": "MIT",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "description": "Easy Zustand",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/1adybug/easy-zustand"
+    },
+    "scripts": {
+        "build": "npx tsc -p ."
+    },
+    "dependencies": {
+        "zustand": "^4.3.2"
+    },
+    "keywords": [
+        "zustand"
+    ],
+    "devDependencies": {
+        "typescript": "^4.9.5"
+    }
+}
