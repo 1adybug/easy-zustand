@@ -1,11 +1,47 @@
-import { create } from "zustand"
+import { create, UseBoundStore, StoreApi } from "zustand"
 
-export default function createStore<T extends Object>(state: T) {
-    type SetState = (newState: Partial<T>) => void
-    return create<T & { setState: SetState }>(set => ({
+type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false
+
+type GetWritableKeys<T, K = keyof T> = K extends keyof T ? (Equal<Pick<T, K>, Readonly<Pick<T, K>>> extends true ? never : K ) : never
+
+type GetWritableState<T> = {
+    [K in GetWritableKeys<T>]: T[K]
+}
+
+type GetSetState<T extends Object> = (newState: Partial<GetWritableState<T>> | ((oldState: T) => Partial<GetWritableState<T>>)) => void
+
+type GetStore<T extends Object, P extends Object = {}> = T & { setState: GetSetState<T> } & P
+
+function createStore<T extends Object>(state: T): UseBoundStore<StoreApi<GetStore<T>>>
+
+function createStore<T extends Object, P extends Object = {}>(state: T, readyOnly: P): UseBoundStore<StoreApi<GetStore<T, P>>>
+
+function createStore<T extends Object, P extends Object = {}>(state: T, readyOnly?: P) {
+    if (readyOnly === undefined) {
+        type Store = GetStore<T>
+        return create<Store>(set => ({
+            ...state,
+            setState: newState => {
+                if (typeof newState === "function") {
+                    set(oldState => newState(oldState) as Partial<Store>)
+                    return
+                }
+                set(newState as Partial<Store>)
+            }
+        }))
+    }
+    type Store = GetStore<T, P>
+    return create<Store>(set => ({
         ...state,
-        setState: (newState: Partial<T>) => {
-            set(oldState => ({ ...oldState, ...newState }))
-        }
+        setState: newState => {
+            if (typeof newState === "function") {
+                set(oldState => newState(oldState) as Partial<Store>)
+                return
+            }
+            set(newState as Partial<Store>)
+        },
+        ...readyOnly
     }))
 }
+
+export default createStore

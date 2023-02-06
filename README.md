@@ -1,5 +1,9 @@
 # easy-zustand
 
+## Intrd
+
+based on [Zustand](https://www.npmjs.com/package/zustand)
+
 ## Usage
 
 1. Pass ur oginial state to createStore
