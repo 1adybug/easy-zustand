@@ -30,7 +30,7 @@ based on [Zustand](https://www.npmjs.com/package/zustand)
             },
             {
                 age: 18,
-                height: 180
+                say: () => console.log("Hello, world")
             }
         )
         ```
@@ -42,15 +42,15 @@ based on [Zustand](https://www.npmjs.com/package/zustand)
             name: string
             hobby: string
             readonly age: number
-            readonly height: number
+            readonly say: () => void
         }
 
         const useStore = createStore<Info>(
             {
                 name: "Tom",
-                hobby: "movie"
+                hobby: "movie",
                 age: 18,
-                height: 180
+                say: () => console.log("Hello, world")
             }
         )
         ```
