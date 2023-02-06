@@ -17,22 +17,68 @@ based on [Zustand](https://www.npmjs.com/package/zustand)
     })
     ```
 
+    Sometimes you may want to ensure that certain properties of the state are read-only, such as methods or constants.
+    There are two methods available for you to use:
+
+    1. Pass those read-only properties in the second parameter of `createStore`
+
+        ```typescript
+        const useStore = createStore(
+            {
+                name: "Tom",
+                hobby: "movie"
+            },
+            {
+                age: 18,
+                height: 180
+            }
+        )
+        ```
+
+    2. Define the type of the state
+
+        ```typescript
+        interface Info {
+            name: string
+            hobby: string
+            readonly age: number
+            readonly height: number
+        }
+
+        const useStore = createStore<Info>(
+            {
+                name: "Tom",
+                hobby: "movie"
+                age: 18,
+                height: 180
+            }
+        )
+        ```
+
+    In both cases above, `age` and `height` will not appear in the writable properties of `setState`
+
 2. useStore in Function Component
 
     ```typescript
     const store = useStore()
     ```
 
-3. read state directly
+3. read the state directly
 
     ```typescript
-    <div>{state.count}</div>
+    <div>{state.name}</div>
     ```
 
-4. update state by `store.setState`. It's kind of like Class Component's `setState`
+4. update state by `store.setState`. It's kind of like React Class Component's `setState`. You can modify only the properties you want to modify.
 
     ```typescript
-    <button onClick={() => store.setState({count: store.count + 1})}>Add</button>
+    <button onClick={() => store.setState({name: "Jerry"})}>Add</button>
+    ```
+
+    In the same way, you can also pass in a function with the previous state as an argument.
+
+    ```typescript
+    store.setState(prevState => ({hobby: prevState.hobby + " music"}))
     ```
 
 ## Demo
@@ -42,8 +88,7 @@ import createStore from "easy-zustand"
 
 // pass ur oginial state
 const useStore = createStore({
-    name: "Tom",
-    age: 18
+    count: 0
 })
 
 // useStore in ur Component
