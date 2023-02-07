@@ -60,7 +60,7 @@ based on [Zustand](https://www.npmjs.com/package/zustand)
 2. useStore in Function Component
 
     ```typescript
-    const store = useStore()
+    const [state, setState] = useStore()
     ```
 
 3. read the state directly
@@ -69,16 +69,16 @@ based on [Zustand](https://www.npmjs.com/package/zustand)
     <div>{state.name}</div>
     ```
 
-4. update state by `store.setState`. It's kind of like React Class Component's `setState`. You can modify only the properties you want to modify.
+4. update state by `setState`. It's kind of like React Class Component's `setState`. You can modify only the properties you want to modify.
 
     ```typescript
-    <button onClick={() => store.setState({name: "Jerry"})}>Add</button>
+    <button onClick={() => setState({name: "Jerry"})}>Add</button>
     ```
 
     In the same way, you can also pass in a function with the previous state as an argument.
 
     ```typescript
-    store.setState(prevState => ({hobby: prevState.hobby + " music"}))
+    setState(prevState => ({ hobby: prevState.hobby + " music" }))
     ```
 
 ## Demo
@@ -91,14 +91,22 @@ const useStore = createStore({
     count: 0
 })
 
+// It still supports zustand's native usage
+
+useStore.getState
+
+useStore.setState
+
+useStore.subscribe
+
 // useStore in ur Component
 const App: React.FC = () => {
-    const store = useStore()
+    const [state, setState] = useStore()
 
     // it is like React Class Component setState
     return (<>
         <div>count is {store.count}</div>
-        <button onClick={() => store.setState({count: store.count + 1})}>Add</button>
+        <button onClick={() => setState({ count: store.count + 1 })}>Add</button>
     </>)
 }
 ```
