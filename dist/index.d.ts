@@ -13,4 +13,11 @@ export interface GetReturn<T extends Object, P extends Object = {}> {
 }
 declare function createStore<T extends Object>(state: T): GetReturn<T>;
 declare function createStore<T extends Object, P extends Object = {}>(state: T, readyOnly: P): GetReturn<T, P>;
+export interface UsePlainStore<T> {
+    (): [T, (state: T | ((prevState: T) => T)) => void];
+    getState(): T;
+    setState(state: T | ((prevState: T) => T)): void;
+    subscribe(listener: (state: T, prevState: T) => void): () => void;
+}
+export declare function createPlainStore<T>(store: T): UsePlainStore<T>;
 export default createStore;

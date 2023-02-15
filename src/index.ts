@@ -52,4 +52,26 @@ function createStore<T extends Object, P extends Object = {}>(state: T, readyOnl
     return useStore
 }
 
+export interface UsePlainStore<T> {
+    (): [T, (state: T | ((prevState: T) => T)) => void]
+    getState(): T
+    setState(state: T | ((prevState: T) => T)): void
+    subscribe(listener: (state: T, prevState: T) => void): () => void
+}
+
+export function createPlainStore<T>(store: T): UsePlainStore<T> {
+    const originUseStore = create(() => store)
+    const setState = (newState: T | ((prevState: T) => T)) => {
+        originUseStore.setState(newState, true)
+    }
+    const useStore: UsePlainStore<T> = () => {
+        const state = originUseStore()
+        return [state, setState]
+    }
+    useStore.getState = originUseStore.getState
+    useStore.setState = setState
+    useStore.subscribe = originUseStore.subscribe
+    return useStore
+}
+
 export default createStore
