@@ -28,7 +28,7 @@ function createStore<T, P extends boolean = boolean>(state: T, replace?: P): Use
 
     let setState: UseStore<T, P>["setState"]
 
-    if (!!replace) {
+    if (!replace) {
         setState = newState => {
             originUseStore.setState(newState as Partial<T> | ((prevState: T) => Partial<T>), false)
         }
