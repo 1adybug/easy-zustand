@@ -4,7 +4,7 @@ const zustand_1 = require("zustand");
 function createStore(state, replace) {
     const originUseStore = (0, zustand_1.create)(() => state);
     let setState;
-    if (replace === true) {
+    if (!!replace) {
         setState = newState => {
             originUseStore.setState(newState, false);
         };

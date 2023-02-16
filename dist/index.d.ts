@@ -11,5 +11,6 @@ export interface UseStore<T, P extends boolean> {
     subscribe(listener: (state: T, prevState: T) => void): () => void;
 }
 declare function createStore<T>(state: T): UseStore<T, false>;
-declare function createStore<T, P extends boolean>(state: T, replace: P): UseStore<T, P>;
+declare function createStore<T>(state: T, replace: true): UseStore<T, true>;
+declare function createStore<T>(state: T, replace: false): UseStore<T, false>;
 export default createStore;

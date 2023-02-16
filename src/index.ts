@@ -19,14 +19,16 @@ export interface UseStore<T, P extends boolean> {
 
 function createStore<T>(state: T): UseStore<T, false>
 
-function createStore<T, P extends boolean>(state: T, replace: P): UseStore<T, P>
+function createStore<T>(state: T, replace: true): UseStore<T, true>
 
-function createStore<T, P extends boolean = false>(state: T, replace?: P): UseStore<T, P> {
+function createStore<T>(state: T, replace: false): UseStore<T, false>
+
+function createStore<T, P extends boolean = boolean>(state: T, replace?: P): UseStore<T, P> {
     const originUseStore = create(() => state)
 
     let setState: UseStore<T, P>["setState"]
 
-    if (replace === true) {
+    if (!!replace) {
         setState = newState => {
             originUseStore.setState(newState as Partial<T> | ((prevState: T) => Partial<T>), false)
         }
