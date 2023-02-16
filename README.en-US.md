@@ -1,14 +1,14 @@
 # easy-zustand
 
-<a href="https://github.com/1adybug/easy-zustand/blob/master/README.md">English</a> | 简体中文
+English | <a href="https://github.com/1adybug/easy-zustand/blob/master/README.en-US.md">简体中文</a>
 
-## 简介
+## Intrd
 
-基于 [Zustand](https://www.npmjs.com/package/zustand)
+based on [Zustand](https://www.npmjs.com/package/zustand)
 
 ## Usage
 
-1. 给 `createStore` 传入你的原始状态，类型会被自动识别。
+1. Pass ur oginial state to `createStore`. The type will be automatically recognized.
 
     ```typescript
     import createStore from "easy-zustand"
@@ -19,7 +19,7 @@
     })
     ```
 
-    有时候，你可能想要确保某些属性不可被修改，比如常量或者方法。只需要先定义类型。
+    Sometimes you may want to ensure that certain properties of the state are read-only, such as methods or constants. Just define the type of the state firstly.
 
     ```typescript
     interface Info {
@@ -39,33 +39,33 @@
     )
     ```
 
-    在上面案例中, `age` 和 `height` 不会出现 `setState` 的可修改的属性中
+    In the case above, `age` and `height` will not appear in the writable properties of `setState`
 
-2. 在函数式组件中使用 `useStore`
+2. useStore in Function Component
 
     ```typescript
     const [state, setState] = useStore()
     ```
 
-3. 直接读取状态
+3. read the state directly
 
     ```typescript
     <div>{state.name}</div>
     ```
 
-4. 通过 `setState` 更新状态。这有点像 React 的类式组件，你可以只修改你想要修改的属性。
+4. update state by `setState`. It's kind of like React Class Component's `setState`. You can modify only the properties you want to modify.
 
     ```typescript
     <button onClick={() => setState({ name: "Jerry" })}>Add</button>
     ```
 
-    同样, 你也可以传入一个以之前状态为参数的函数
+    In the same way, you can also pass in a function with the previous state as an argument.
 
     ```typescript
     setState(prevState => ({ hobby: prevState.hobby + " music" }))
     ```
 
-5. 对于那些不是对象的变量，比如数组或者其他普通数据类型。强烈建议传入第二个参数 `replace` 为 `true`
+5. For those variables that are not `object` type, such as `array` or other plain types. It is strongly recommended to pass the second parameter `replace` as true.
 
     ```typescript
     const useList = createStore<number[]>([1, 2, 3, 4], true)
@@ -75,7 +75,7 @@
     setList([1, 2, 3, 4, 5])
     ```
 
-    如果你没有把 `replace` 设置为 `true` 的话, `zustand` 会把它当做对象来处理
+    If you don't set `replace` as `true`, `zustand` will treat it as the `object` type.
 
     ```typescript
     const useList = createStore<number[]>([1, 2, 3, 4])
@@ -85,7 +85,7 @@
     setList([1, 2, 3, 4, 5])
     ```
 
-    在你更改 `list` 的值之后，它会变成:
+    After you change the value of `list`, it will become:
 
     ```typescript
     list === {
@@ -97,19 +97,19 @@
     }
     ```
 
-    它失去了所有的数组方法和属性。
+    It loses all array methods and properties.
 
-## 使用案例
+## Demo
 
 ```typescript
 import createStore from "easy-zustand"
 
-// 传入你的原始状态
+// pass ur oginial state
 const useStore = createStore({
     count: 0
 })
 
-// 它仍然支持 zustand 的三个原生用法
+// It still supports zustand's native usage
 
 useStore.getState
 
@@ -117,7 +117,7 @@ useStore.setState
 
 useStore.subscribe
 
-// 在组件中使用
+// useStore in ur Component
 const App: React.FC = () => {
     const [state, setState] = useStore()
 

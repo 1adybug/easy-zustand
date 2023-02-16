@@ -1,76 +1,50 @@
-import { create, StoreApi } from "zustand"
+import { create } from "zustand"
 
 export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false
 
 export type GetWritableKeys<T, K = keyof T> = K extends keyof T ? (Equal<Pick<T, K>, Readonly<Pick<T, K>>> extends true ? never : K) : never
 
-export type GetWritableState<T> = {
-    [K in GetWritableKeys<T>]: T[K]
-}
+export type GetWritableState<T, P extends boolean> = P extends false
+    ? {
+          [K in GetWritableKeys<T>]: T[K]
+      }
+    : T
 
-export type GetStore<T extends Object, P extends Object = {}> = T & P
-
-export interface GetReturn<T extends Object, P extends Object = {}> {
-    (): [GetStore<T, P>, StoreApi<GetStore<GetWritableState<T>>>["setState"], StoreApi<GetStore<T, P>>["subscribe"]]
-    getState: StoreApi<GetStore<T, P>>["getState"]
-    setState: StoreApi<GetStore<GetWritableState<T>>>["setState"]
-    subscribe: StoreApi<GetStore<T, P>>["subscribe"]
-}
-
-function createStore<T extends Object>(state: T): GetReturn<T>
-
-function createStore<T extends Object, P extends Object = {}>(state: T, readyOnly: P): GetReturn<T, P>
-
-function createStore<T extends Object, P extends Object = {}>(state: T, readyOnly?: P) {
-    if (readyOnly === undefined) {
-        type Store = GetStore<T>
-        const result = create<Store>(set => state)
-        const getState = result.getState
-        const setState = result.setState as StoreApi<GetStore<GetWritableState<T>>>["setState"]
-        const subscribe = result.subscribe
-        const useStore: GetReturn<T> = () => {
-            const state = result()
-            return [state, setState, subscribe]
-        }
-        useStore.getState = getState
-        useStore.setState = setState
-        useStore.subscribe = subscribe
-        return useStore
-    }
-    type Store = GetStore<T, P>
-    const result = create<Store>(set => ({ ...state, ...readyOnly }))
-    const getState = result.getState
-    const setState = result.setState as StoreApi<GetStore<GetWritableState<T>>>["setState"]
-    const subscribe = result.subscribe
-    const useStore: GetReturn<T, P> = () => {
-        const state = result()
-        return [state, setState, subscribe]
-    }
-    useStore.getState = getState
-    useStore.setState = setState
-    useStore.subscribe = subscribe
-    return useStore
-}
-
-export interface UsePlainStore<T> {
-    (): [T, (state: T | ((prevState: T) => T)) => void]
+export interface UseStore<T, P extends boolean> {
+    (): [T, (state: GetWritableState<T, P> | ((prevState: T) => GetWritableState<T, P>)) => void]
     getState(): T
-    setState(state: T | ((prevState: T) => T)): void
+    setState(state: GetWritableState<T, P> | ((prevState: T) => GetWritableState<T, P>)): void
     subscribe(listener: (state: T, prevState: T) => void): () => void
 }
 
-export function createPlainStore<T>(store: T): UsePlainStore<T> {
-    const originUseStore = create(() => store)
-    const setState = (newState: T | ((prevState: T) => T)) => {
-        originUseStore.setState(newState, true)
+function createStore<T>(state: T): UseStore<T, false>
+
+function createStore<T, P extends boolean>(state: T, replace: P): UseStore<T, P>
+
+function createStore<T, P extends boolean = false>(state: T, replace?: P): UseStore<T, P> {
+    const originUseStore = create(() => state)
+
+    let setState: UseStore<T, P>["setState"]
+
+    if (replace === true) {
+        setState = newState => {
+            originUseStore.setState(newState as Partial<T> | ((prevState: T) => Partial<T>), false)
+        }
+    } else {
+        setState = newState => {
+            originUseStore.setState(newState as T | ((prevState: T) => T), true)
+        }
     }
-    const useStore: UsePlainStore<T> = () => {
+
+    const useStore: UseStore<T, P> = () => {
         const state = originUseStore()
         return [state, setState]
     }
-    useStore.getState = originUseStore.getState
+
     useStore.setState = setState
+    useStore.getState = originUseStore.getState
     useStore.subscribe = originUseStore.subscribe
+
     return useStore
 }
 
