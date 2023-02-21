@@ -58,43 +58,4 @@ export function getFrameThrottle() {
     }
 }
 
-export function createAutoBatchStore<T>(state: T): UseStore<T, false>
-
-export function createAutoBatchStore<T>(state: T, replace: true): UseStore<T, true>
-
-export function createAutoBatchStore<T>(state: T, replace: false): UseStore<T, false>
-
-export function createAutoBatchStore<T, P extends boolean = boolean>(state: T, replace?: P): UseStore<T, P> {
-    const originUseStore = create(() => state)
-
-    const frameThrottle = getFrameThrottle()
-
-    let setState: UseStore<T, P>["setState"]
-
-    if (!replace) {
-        setState = (newState, replace) => {
-            frameThrottle(() => {
-                originUseStore.setState(newState as Partial<T> | ((prevState: T) => Partial<T>), replace ?? false)
-            })
-        }
-    } else {
-        setState = (newState, replace) => {
-            frameThrottle(() => {
-                originUseStore.setState(newState as T | ((prevState: T) => T), replace ?? true)
-            })
-        }
-    }
-
-    const useStore: UseStore<T, P> = () => {
-        const state = originUseStore()
-        return [state, setState]
-    }
-
-    useStore.setState = setState
-    useStore.getState = originUseStore.getState
-    useStore.subscribe = originUseStore.subscribe
-
-    return useStore
-}
-
 export default createStore

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createAutoBatchStore = exports.getFrameThrottle = void 0;
+exports.getFrameThrottle = void 0;
 const zustand_1 = require("zustand");
 function createStore(state, replace) {
     const originUseStore = (0, zustand_1.create)(() => state);
@@ -32,33 +32,5 @@ function getFrameThrottle() {
     };
 }
 exports.getFrameThrottle = getFrameThrottle;
-function createAutoBatchStore(state, replace) {
-    const originUseStore = (0, zustand_1.create)(() => state);
-    const frameThrottle = getFrameThrottle();
-    let setState;
-    if (!replace) {
-        setState = (newState, replace) => {
-            frameThrottle(() => {
-                originUseStore.setState(newState, replace !== null && replace !== void 0 ? replace : false);
-            });
-        };
-    }
-    else {
-        setState = (newState, replace) => {
-            frameThrottle(() => {
-                originUseStore.setState(newState, replace !== null && replace !== void 0 ? replace : true);
-            });
-        };
-    }
-    const useStore = () => {
-        const state = originUseStore();
-        return [state, setState];
-    };
-    useStore.setState = setState;
-    useStore.getState = originUseStore.getState;
-    useStore.subscribe = originUseStore.subscribe;
-    return useStore;
-}
-exports.createAutoBatchStore = createAutoBatchStore;
 exports.default = createStore;
 //# sourceMappingURL=index.js.map

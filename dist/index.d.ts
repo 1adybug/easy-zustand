@@ -14,7 +14,4 @@ declare function createStore<T>(state: T): UseStore<T, false>;
 declare function createStore<T>(state: T, replace: true): UseStore<T, true>;
 declare function createStore<T>(state: T, replace: false): UseStore<T, false>;
 export declare function getFrameThrottle(): (fun: () => any) => void;
-export declare function createAutoBatchStore<T>(state: T): UseStore<T, false>;
-export declare function createAutoBatchStore<T>(state: T, replace: true): UseStore<T, true>;
-export declare function createAutoBatchStore<T>(state: T, replace: false): UseStore<T, false>;
 export default createStore;
