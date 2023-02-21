@@ -7,10 +7,14 @@ export type GetNewState<T, P extends boolean> = P extends false ? Partial<GetWri
 export interface UseStore<T, P extends boolean> {
     (): [T, (state: GetNewState<T, P> | ((prevState: T) => GetNewState<T, P>)) => void];
     getState(): T;
-    setState(state: GetNewState<T, P> | ((prevState: T) => GetNewState<T, P>)): void;
+    setState(state: GetNewState<T, P> | ((prevState: T) => GetNewState<T, P>), replace?: boolean): void;
     subscribe(listener: (state: T, prevState: T) => void): () => void;
 }
 declare function createStore<T>(state: T): UseStore<T, false>;
 declare function createStore<T>(state: T, replace: true): UseStore<T, true>;
 declare function createStore<T>(state: T, replace: false): UseStore<T, false>;
+export declare function getFrameThrottle(): (fun: () => any) => void;
+export declare function createAutoBatchStore<T>(state: T): UseStore<T, false>;
+export declare function createAutoBatchStore<T>(state: T, replace: true): UseStore<T, true>;
+export declare function createAutoBatchStore<T>(state: T, replace: false): UseStore<T, false>;
 export default createStore;
