@@ -57,9 +57,21 @@ export function getFrameThrottle() {
     }
 }
 
-export interface CreatePersistentStoreOption<T extends boolean | undefined = false> {
-    replace?: T
+interface CreatePersistentStoreOption<T extends boolean | undefined = false> {
+    /** 用来标识状态的唯一 id */
     name: string
+    /** 改变状态是否完全覆盖，默认为 false */
+    replace?: T
+    /** 用来持久化的存储，默认是 localStorage */
+    storage?: Window["sessionStorage"] | Window["localStorage"]
+}
+
+export interface PersistentStoreOption {
+    /** 用来标识状态的唯一 id */
+    name: string
+    /** 改变状态是否完全覆盖，默认为 false */
+    replace?: boolean
+    /** 用来持久化的存储，默认是 localStorage */
     storage?: Window["sessionStorage"] | Window["localStorage"]
 }
 

@@ -99,6 +99,27 @@ based on [Zustand](https://www.npmjs.com/package/zustand)
 
     It loses all array methods and properties.
 
+6. persistent storage
+
+    ```typescript
+    import { createPersistentStore, PersistentStoreOption } from "easy-zustand"
+
+    interface PersistentStoreOption {
+        /** unique id */
+        name: string
+        /** (optional) by default, 'false' is used */
+        replace?: boolean
+        /** (optional) by default, 'localStorage' is used */
+        storage?: Window["sessionStorage"] | Window["localStorage"]
+    }
+
+    const useInfo = createPersistentStore({ age: 18 }, "info")
+
+    // it equals
+    const useInfo = createPersistentStore({ age: 18 }, { name: "info", replace: false, storage: localStorage })
+
+    ```
+
 ## Demo
 
 ```typescript

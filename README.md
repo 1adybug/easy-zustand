@@ -99,6 +99,27 @@
 
     它失去了所有的数组方法和属性。
 
+6. 持久化存储
+
+    ```typescript
+    import { createPersistentStore, PersistentStoreOption } from "easy-zustand"
+
+    interface PersistentStoreOption {
+        /** 用来标识状态的唯一 id */
+        name: string
+        /** 改变状态是否完全覆盖，默认为 false */
+        replace?: boolean
+        /** 用来持久化的存储，默认是 localStorage */
+        storage?: Window["sessionStorage"] | Window["localStorage"]
+    }
+
+    const useInfo = createPersistentStore({ age: 18 }, "info")
+
+    // 上述等价于
+    const useInfo = createPersistentStore({ age: 18 }, { name: "info", replace: false, storage: localStorage })
+
+    ```
+
 ## 使用案例
 
 ```typescript
