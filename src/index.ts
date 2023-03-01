@@ -1,4 +1,5 @@
 import { create } from "zustand"
+import { persist, createJSONStorage } from "zustand/middleware"
 
 export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false
 
@@ -19,11 +20,9 @@ export interface UseStore<T, P extends boolean> {
 
 function createStore<T>(state: T): UseStore<T, false>
 
-function createStore<T>(state: T, replace: true): UseStore<T, true>
+function createStore<T, P extends boolean>(state: T, replace: P): UseStore<T, P>
 
-function createStore<T>(state: T, replace: false): UseStore<T, false>
-
-function createStore<T, P extends boolean = boolean>(state: T, replace?: P): UseStore<T, P> {
+function createStore<T, P extends boolean>(state: T, replace?: P): UseStore<T, P> {
     const originUseStore = create(() => state)
 
     let setState: UseStore<T, P>["setState"]
@@ -56,6 +55,53 @@ export function getFrameThrottle() {
         cancelAnimationFrame(signal)
         signal = requestAnimationFrame(fun)
     }
+}
+
+export interface CreatePersistentStoreOption<T extends boolean | undefined = false> {
+    replace?: T
+    name: string
+    storage?: Window["sessionStorage"] | Window["localStorage"]
+}
+
+export function createPersistentStore<T>(state: T, name: string): UseStore<T, false>
+export function createPersistentStore<T, P extends undefined>(state: T, option: CreatePersistentStoreOption<P>): UseStore<T, false>
+export function createPersistentStore<T, P extends boolean>(state: T, option: CreatePersistentStoreOption<P>): UseStore<T, P>
+export function createPersistentStore<T, P extends boolean | undefined>(state: T, nameOrOption: CreatePersistentStoreOption<P> | string) {
+    const option = typeof nameOrOption === "string" ? { replace: false, name: nameOrOption, storage: localStorage } : nameOrOption
+
+    const { replace, name, storage } = option
+
+    type Z = typeof replace extends true ? true : false
+
+    const originUseStore = create(
+        persist(() => state, {
+            name,
+            storage: createJSONStorage(() => storage || localStorage)
+        })
+    )
+
+    let setState: UseStore<T, Z>["setState"]
+
+    if (!replace) {
+        setState = (newState, replace) => {
+            originUseStore.setState(newState as Partial<T> | ((prevState: T) => Partial<T>), replace ?? false)
+        }
+    } else {
+        setState = (newState, replace) => {
+            originUseStore.setState(newState as T | ((prevState: T) => T), replace ?? true)
+        }
+    }
+
+    const useStore: UseStore<T, Z> = () => {
+        const state = originUseStore()
+        return [state, setState]
+    }
+
+    useStore.setState = setState
+    useStore.getState = originUseStore.getState
+    useStore.subscribe = originUseStore.subscribe
+
+    return useStore
 }
 
 export default createStore
