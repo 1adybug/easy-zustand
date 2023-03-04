@@ -11,7 +11,8 @@ export interface UseStore<T, P extends boolean> {
     subscribe(listener: (state: T, prevState: T) => void): () => void;
 }
 declare function createStore<T>(state: T): UseStore<T, false>;
-declare function createStore<T, P extends boolean>(state: T, replace: P): UseStore<T, P>;
+declare function createStore<T>(state: T, replace: false): UseStore<T, false>;
+declare function createStore<T>(state: T, replace: true): UseStore<T, true>;
 export declare function getFrameThrottle(): (fun: () => any) => void;
 interface CreatePersistentStoreOption<T extends boolean | undefined = false> {
     /** 用来标识状态的唯一 id */
@@ -30,6 +31,6 @@ export interface PersistentStoreOption {
     storage?: Window["sessionStorage"] | Window["localStorage"];
 }
 export declare function createPersistentStore<T>(state: T, name: string): UseStore<T, false>;
-export declare function createPersistentStore<T, P extends undefined>(state: T, option: CreatePersistentStoreOption<P>): UseStore<T, false>;
-export declare function createPersistentStore<T, P extends boolean>(state: T, option: CreatePersistentStoreOption<P>): UseStore<T, P>;
+export declare function createPersistentStore<T>(state: T, option: CreatePersistentStoreOption<false>): UseStore<T, false>;
+export declare function createPersistentStore<T>(state: T, option: CreatePersistentStoreOption<true>): UseStore<T, true>;
 export default createStore;

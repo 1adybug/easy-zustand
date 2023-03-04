@@ -20,7 +20,9 @@ export interface UseStore<T, P extends boolean> {
 
 function createStore<T>(state: T): UseStore<T, false>
 
-function createStore<T, P extends boolean>(state: T, replace: P): UseStore<T, P>
+function createStore<T>(state: T, replace: false): UseStore<T, false>
+
+function createStore<T>(state: T, replace: true): UseStore<T, true>
 
 function createStore<T, P extends boolean>(state: T, replace?: P): UseStore<T, P> {
     const originUseStore = create(() => state)
@@ -76,9 +78,9 @@ export interface PersistentStoreOption {
 }
 
 export function createPersistentStore<T>(state: T, name: string): UseStore<T, false>
-export function createPersistentStore<T, P extends undefined>(state: T, option: CreatePersistentStoreOption<P>): UseStore<T, false>
-export function createPersistentStore<T, P extends boolean>(state: T, option: CreatePersistentStoreOption<P>): UseStore<T, P>
-export function createPersistentStore<T, P extends boolean | undefined>(state: T, nameOrOption: CreatePersistentStoreOption<P> | string) {
+export function createPersistentStore<T>(state: T, option: CreatePersistentStoreOption<false>): UseStore<T, false>
+export function createPersistentStore<T>(state: T, option: CreatePersistentStoreOption<true>): UseStore<T, true>
+export function createPersistentStore<T, P extends boolean>(state: T, nameOrOption: CreatePersistentStoreOption<P> | string) {
     const option = typeof nameOrOption === "string" ? { replace: false, name: nameOrOption, storage: localStorage } : nameOrOption
 
     const { replace, name, storage } = option
