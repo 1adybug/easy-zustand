@@ -1,0 +1,37 @@
+{
+    "name": "easy-zustand",
+    "version": "4.0.0",
+    "description": "Easy Zustand",
+    "main": "dist/cjs/index.js",
+    "module": "dist/esm/index.js",
+    "scripts": {
+        "dev": "father dev",
+        "build": "father build",
+        "build:deps": "father prebundle",
+        "prepublishOnly": "father doctor && npm run build"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/1adybug/easy-zustand"
+    },
+    "keywords": [
+        "zustand"
+    ],
+    "authors": [
+        "luorngv@qq.com"
+    ],
+    "license": "MIT",
+    "files": [
+        "dist",
+        "compiled"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "dependencies": {
+        "zustand": "^4.4.6"
+    },
+    "devDependencies": {
+        "father": "^4.3.7"
+    }
+}
