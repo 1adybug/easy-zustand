@@ -1,5 +1,11 @@
 import { StoreApi, UseBoundStore, create } from "zustand"
-import { persist, createJSONStorage, StateStorage, PersistOptions } from "zustand/middleware"
+import { persist, createJSONStorage, PersistOptions } from "zustand/middleware"
+
+export interface StateStorage {
+    getItem: (name: string) => string | null | Promise<string | null>
+    setItem: (name: string, value: string) => any | Promise<any>
+    removeItem: (name: string) => any | Promise<any>
+}
 
 export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2 ? true : false
 
