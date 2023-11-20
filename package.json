@@ -1,6 +1,6 @@
 {
     "name": "easy-zustand",
-    "version": "4.0.0",
+    "version": "4.0.1",
     "description": "Easy Zustand",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
